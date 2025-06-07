@@ -23,7 +23,7 @@ internal static class SchemaUtils
 #else
         // Android does not require AOT. No need to register components via: new NativeAOT()
         return System.Runtime.CompilerServices.RuntimeFeature.IsDynamicCodeSupported;
-    //  return System.Runtime.CompilerServices.RuntimeFeature.IsDynamicCodeCompiled;
+        // return System.Runtime.CompilerServices.RuntimeFeature.IsDynamicCodeCompiled;
 #endif
     }
     

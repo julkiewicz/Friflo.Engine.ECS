@@ -4,7 +4,6 @@
 // Hard rule: this file MUST NOT use type: Entity
 
 using System;
-using Friflo.Engine.ECS.ReadyCode;
 
 // ReSharper disable InlineTemporaryVariable
 // ReSharper disable ArrangeTrailingCommaInMultilineLists
