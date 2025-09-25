@@ -117,6 +117,7 @@ where T3 : struct
         if (query.checkChange) {
             store = query.store;
             store.internBase.activeQueryLoops++;
+            QueryEntities.LastQueryTrace = Environment.StackTrace;
         }
     }
     

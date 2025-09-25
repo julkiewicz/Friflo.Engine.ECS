@@ -99,6 +99,7 @@ public struct ChunkEnumerator<T1> : IEnumerator<Chunks<T1>>
         if (query.checkChange) {
             store = query.store;
             store.internBase.activeQueryLoops++;
+            QueryEntities.LastQueryTrace = Environment.StackTrace;
         }
     }
     

@@ -19,6 +19,8 @@ namespace Friflo.Engine.ECS;
 [DebuggerTypeProxy(typeof(QueryEntitiesDebugView))]
 public readonly struct QueryEntities  : IEnumerable <Entity>
 {
+    public static string LastQueryTrace = "";
+    
     /// <summary> Return the number of entities matching the query. </summary>
     public              int             Count       => query.Count;
     
@@ -112,6 +114,7 @@ public struct EntitiesEnumerator : IEnumerator<Entity>
         checkChange     = query.checkChange;
         if (checkChange) {
             store.internBase.activeQueryLoops++;
+            QueryEntities.LastQueryTrace = Environment.StackTrace;
         }
     }
     
