@@ -99,7 +99,7 @@ public abstract partial class EntityStoreBase
     /// <summary>Contains state of <see cref="EntityStoreBase"/> not relevant for application development.</summary>
     /// <remarks>Declaring internal state fields in this struct remove noise in debugger.</remarks>
     internal struct InternBase {
-        internal        int                                         activeQueryLoops;          //  4
+        internal        volatile int                                activeQueryLoops;          //  4
         //
         internal        long                                        archetypesCapacity;     // 16   - sum of all Archetype capacities
         internal        double                                      shrinkRatio;            //  8

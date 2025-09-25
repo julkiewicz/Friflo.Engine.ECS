@@ -7,6 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using Friflo.Engine.ECS.ReadyCode;
 
 // ReSharper disable InconsistentNaming
@@ -136,7 +137,7 @@ where T5 : struct
         if (query.checkChange) {
             store = query.store;
             EcsRwLock.Instance.EnterReadLock();
-            store.internBase.activeQueryLoops++;
+            Interlocked.Increment(ref store.internBase.activeQueryLoops);
         }
     }
     
@@ -204,7 +205,7 @@ where T5 : struct
     // --- IDisposable
     public void Dispose() {
         if (store != null) {
-            store.internBase.activeQueryLoops--;
+            Interlocked.Decrement(ref store.internBase.activeQueryLoops);
             EcsRwLock.Instance.ExitReadLock();
         }
     }

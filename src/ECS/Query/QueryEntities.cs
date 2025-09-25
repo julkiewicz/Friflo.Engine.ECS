@@ -7,6 +7,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using Friflo.Engine.ECS.ReadyCode;
 using static System.Diagnostics.DebuggerBrowsableState;
 using Browse = System.Diagnostics.DebuggerBrowsableAttribute;
@@ -114,7 +115,7 @@ public struct EntitiesEnumerator : IEnumerator<Entity>
         checkChange     = query.checkChange;
         if (checkChange) {
             EcsRwLock.Instance.EnterReadLock();
-            store.internBase.activeQueryLoops++;
+            Interlocked.Increment(ref store.internBase.activeQueryLoops);
         }
     }
     
@@ -167,7 +168,7 @@ public struct EntitiesEnumerator : IEnumerator<Entity>
     // --- IDisposable
     public void Dispose() {
         if (checkChange) {
-            store.internBase.activeQueryLoops--;
+            Interlocked.Decrement(ref store.internBase.activeQueryLoops);
             EcsRwLock.Instance.ExitReadLock();
         }
     }

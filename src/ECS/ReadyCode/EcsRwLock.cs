@@ -7,7 +7,7 @@ internal static class EcsRwLock
 {
     internal static volatile ReaderWriterLockSlim Instance = new(LockRecursionPolicy.SupportsRecursion);
 
-    internal sealed class ReaderWriterLockMgr(ReaderWriterLockSlim readerWriterLock) : IDisposable
+    internal sealed class ReaderWriterLockMgr : IDisposable
     {
         private enum LockTypes
         {
@@ -21,19 +21,19 @@ internal static class EcsRwLock
 
         internal void EnterReadLock()
         {
-            readerWriterLock.EnterReadLock();
+            Instance.EnterReadLock();
             enteredLockType = LockTypes.Read;
         }
 
         internal void EnterWriteLock()
         {
-            readerWriterLock.EnterWriteLock();
+            Instance.EnterWriteLock();
             enteredLockType = LockTypes.Write;
         }
 
         internal void EnterUpgradeableReadLock()
         {
-            readerWriterLock.EnterUpgradeableReadLock();
+            Instance.EnterUpgradeableReadLock();
             enteredLockType = LockTypes.Upgradeable;
         }
 
@@ -42,15 +42,15 @@ internal static class EcsRwLock
             switch (enteredLockType)
             {
                 case LockTypes.Read:
-                    readerWriterLock.ExitReadLock();
+                    Instance.ExitReadLock();
                     enteredLockType = LockTypes.None;
                     return;
                 case LockTypes.Write:
-                    readerWriterLock.ExitWriteLock();
+                    Instance.ExitWriteLock();
                     enteredLockType = LockTypes.None;
                     return;
                 case LockTypes.Upgradeable:
-                    readerWriterLock.ExitUpgradeableReadLock();
+                    Instance.ExitUpgradeableReadLock();
                     enteredLockType = LockTypes.None;
                     return;
             }
@@ -68,5 +68,5 @@ internal static class EcsRwLock
         }
     }
 
-    internal static ReaderWriterLockMgr GetWriteLock() => new(Instance);
+    internal static ReaderWriterLockMgr GetWriteLock() => new();
 }

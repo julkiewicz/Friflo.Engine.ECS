@@ -7,6 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using Friflo.Engine.ECS.ReadyCode;
 
 // ReSharper disable InconsistentNaming
@@ -100,7 +101,7 @@ public struct ChunkEnumerator<T1> : IEnumerator<Chunks<T1>>
         if (query.checkChange) {
             store = query.store;
             EcsRwLock.Instance.EnterReadLock();
-            store.internBase.activeQueryLoops++;
+            Interlocked.Increment(ref store.internBase.activeQueryLoops);
         }
     }
     
@@ -160,7 +161,7 @@ public struct ChunkEnumerator<T1> : IEnumerator<Chunks<T1>>
     // --- IDisposable
     public void Dispose() {
         if (store != null) {
-            store.internBase.activeQueryLoops--;
+            Interlocked.Decrement(ref store.internBase.activeQueryLoops);
             EcsRwLock.Instance.ExitReadLock();
         }
     }
