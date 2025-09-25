@@ -89,6 +89,7 @@ public struct ChunkEnumerator<T1,T2> : IEnumerator<Chunks<T1,T2>>
 where T1 : struct
 where T2 : struct
 {
+    private readonly    long                     queryId;   //  4
     private readonly    int                     structIndex1;   //  4
     private readonly    int                     structIndex2;   //  4
     //
@@ -108,7 +109,7 @@ where T2 : struct
         if (query.checkChange) {
             store = query.store;
             store.internBase.activeQueryLoops++;
-            QueryEntities.LastQueryTrace = Environment.StackTrace;
+            queryId = QueryEntities.AtomicInsertTrace();
         }
     }
     
@@ -171,6 +172,7 @@ where T2 : struct
     public void Dispose() {
         if (store != null) {
             store.internBase.activeQueryLoops--;
+            QueryEntities.RemoveTrace(queryId);
         }
     }
 }

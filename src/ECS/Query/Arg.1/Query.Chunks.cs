@@ -82,6 +82,7 @@ public readonly struct QueryChunks<T1>  : IEnumerable <Chunks<T1>>
 public struct ChunkEnumerator<T1> : IEnumerator<Chunks<T1>>
     where T1 : struct
 {
+    private readonly    long                     queryId;   //  4
     private readonly    int                     structIndex1;   //  4
     //
     private readonly    EntityStoreBase         store;          //  8
@@ -99,7 +100,7 @@ public struct ChunkEnumerator<T1> : IEnumerator<Chunks<T1>>
         if (query.checkChange) {
             store = query.store;
             store.internBase.activeQueryLoops++;
-            QueryEntities.LastQueryTrace = Environment.StackTrace;
+            queryId = QueryEntities.AtomicInsertTrace();
         }
     }
     
@@ -160,6 +161,7 @@ public struct ChunkEnumerator<T1> : IEnumerator<Chunks<T1>>
     public void Dispose() {
         if (store != null) {
             store.internBase.activeQueryLoops--;
+            QueryEntities.RemoveTrace(queryId);
         }
     }
 }

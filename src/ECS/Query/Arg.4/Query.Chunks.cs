@@ -103,6 +103,7 @@ where T2 : struct
 where T3 : struct
 where T4 : struct
 {
+    private readonly    long                     queryId;   //  4
     private readonly    int                     structIndex1;   //  4
     private readonly    int                     structIndex2;   //  4
     private readonly    int                     structIndex3;   //  4
@@ -126,7 +127,7 @@ where T4 : struct
         if (query.checkChange) {
             store = query.store;
             store.internBase.activeQueryLoops++;
-            QueryEntities.LastQueryTrace = Environment.StackTrace;
+            queryId = QueryEntities.AtomicInsertTrace();
         }
     }
     
@@ -193,6 +194,7 @@ where T4 : struct
     public void Dispose() {
         if (store != null) {
             store.internBase.activeQueryLoops--;
+            QueryEntities.RemoveTrace(queryId);
         }
     }
 }
