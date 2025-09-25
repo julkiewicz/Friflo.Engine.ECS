@@ -74,7 +74,7 @@ internal static class EcsRwLock
         }
     }
 
-    internal static readonly ReaderWriterLockSlim Instance = new(LockRecursionPolicy.NoRecursion);
+    internal static readonly ReaderWriterLockSlim Instance = new(LockRecursionPolicy.SupportsRecursion);
 
     public static ReaderWriterLockMgr GetWriteLock() => new(Instance);
 }
