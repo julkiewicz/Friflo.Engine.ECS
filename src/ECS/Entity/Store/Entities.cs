@@ -104,7 +104,7 @@ public partial class EntityStore
         var targetStore     = target.store;
         if (source.store == targetStore) {
             if (targetStore.internBase.activeQueryLoops > 0) {
-                throw StructuralChangeWithinQueryLoop();
+                throw StructuralChangeWithinQueryLoop(targetStore);
             }
         }
         var targetArch = targetStore.GetArchetype(sourceArch.componentTypes, sourceArch.Tags);

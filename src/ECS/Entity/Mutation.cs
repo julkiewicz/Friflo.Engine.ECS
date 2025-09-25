@@ -21,7 +21,7 @@ public readonly partial struct  Entity
         @lock.EnterWriteLock();
 
         if (store.internBase.activeQueryLoops > 0) {
-            throw EntityStoreBase.StructuralChangeWithinQueryLoop();
+            throw EntityStoreBase.StructuralChangeWithinQueryLoop(store);
         }
         int id          = Id;
         var localStore  = store;
@@ -81,7 +81,7 @@ public readonly partial struct  Entity
         @lock.EnterWriteLock();
 
         if (store.internBase.activeQueryLoops > 0) {
-            throw EntityStoreBase.StructuralChangeWithinQueryLoop();
+            throw EntityStoreBase.StructuralChangeWithinQueryLoop(store);
         }
         var id              = Id;
         int structIndex     = StructInfo<T>.Index;

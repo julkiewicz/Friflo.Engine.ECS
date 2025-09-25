@@ -134,7 +134,7 @@ public partial class EntityStoreBase
         @lock.EnterWriteLock();
 
         if (internBase.activeQueryLoops > 0) {
-            throw StructuralChangeWithinQueryLoop();
+            throw StructuralChangeWithinQueryLoop(this);
         }
         var key             = searchKey;
         key.tags            = type.tags;
@@ -161,7 +161,7 @@ public partial class EntityStoreBase
         @lock.EnterWriteLock();
         
         if (internBase.activeQueryLoops > 0) {
-            throw StructuralChangeWithinQueryLoop();
+            throw StructuralChangeWithinQueryLoop(this);
         }
         var key             = searchKey;
         key.tags            = type.tags;

@@ -118,7 +118,7 @@ public partial class EntityStoreBase
         @lock.EnterWriteLock();
 
         if (store.internBase.activeQueryLoops > 0) {
-            throw StructuralChangeWithinQueryLoop();
+            throw StructuralChangeWithinQueryLoop(store);
         }
         var arch        = archetype;
         var curTags     = arch.tags;
@@ -151,7 +151,7 @@ public partial class EntityStoreBase
         @lock.EnterWriteLock();
 
         if (store.internBase.activeQueryLoops > 0) {
-            throw StructuralChangeWithinQueryLoop();
+            throw StructuralChangeWithinQueryLoop(store);
         }
         var arch        = archetype;
         var curTags     = arch.tags;

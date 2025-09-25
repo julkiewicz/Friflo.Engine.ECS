@@ -97,7 +97,7 @@ public partial class EntityStore
         @lock.EnterWriteLock();
 
         if (internBase.activeQueryLoops > 0) {
-            throw StructuralChangeWithinQueryLoop();
+            throw StructuralChangeWithinQueryLoop(this);
         }
         Entity entity;
         if (intern.pidType == PidType.UsePidAsId) {

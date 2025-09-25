@@ -158,7 +158,7 @@ public sealed class CommandBuffer : ICommandBuffer
         @lock.EnterWriteLock();
 
         if (intern.store.internBase.activeQueryLoops > 0) {
-            throw EntityStoreBase.StructuralChangeWithinQueryLoop();
+            throw EntityStoreBase.StructuralChangeWithinQueryLoop(EntityStore);
         }
         if (!intern.hasCommands) {
             // early out if command buffer is still empty 
