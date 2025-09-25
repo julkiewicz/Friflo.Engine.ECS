@@ -3,70 +3,63 @@ using System.Threading;
 
 namespace Friflo.Engine.ECS.ReadyCode;
 
-internal static class EcsRwLock
+internal sealed class ReaderWriterLockMgr(ReaderWriterLockSlim rwLock) : IDisposable
 {
-    internal static volatile ReaderWriterLockSlim Instance = new(LockRecursionPolicy.SupportsRecursion);
-
-    internal sealed class ReaderWriterLockMgr : IDisposable
+    private enum LockTypes
     {
-        private enum LockTypes
-        {
-            None,
-            Read,
-            Write,
-            Upgradeable
-        }
+        None,
+        Read,
+        Write,
+        Upgradeable
+    }
 
-        private LockTypes enteredLockType = LockTypes.None;
+    private LockTypes enteredLockType = LockTypes.None;
 
-        internal void EnterReadLock()
-        {
-            Instance.EnterReadLock();
-            enteredLockType = LockTypes.Read;
-        }
+    internal void EnterReadLock()
+    {
+        rwLock.EnterReadLock();
+        enteredLockType = LockTypes.Read;
+    }
 
-        internal void EnterWriteLock()
-        {
-            Instance.EnterWriteLock();
-            enteredLockType = LockTypes.Write;
-        }
+    internal void EnterWriteLock()
+    {
+        rwLock.EnterWriteLock();
+        enteredLockType = LockTypes.Write;
+    }
 
-        internal void EnterUpgradeableReadLock()
-        {
-            Instance.EnterUpgradeableReadLock();
-            enteredLockType = LockTypes.Upgradeable;
-        }
+    internal void EnterUpgradeableReadLock()
+    {
+        rwLock.EnterUpgradeableReadLock();
+        enteredLockType = LockTypes.Upgradeable;
+    }
 
-        private void ExitLock()
+    private void ExitLock()
+    {
+        switch (enteredLockType)
         {
-            switch (enteredLockType)
-            {
-                case LockTypes.Read:
-                    Instance.ExitReadLock();
-                    enteredLockType = LockTypes.None;
-                    return;
-                case LockTypes.Write:
-                    Instance.ExitWriteLock();
-                    enteredLockType = LockTypes.None;
-                    return;
-                case LockTypes.Upgradeable:
-                    Instance.ExitUpgradeableReadLock();
-                    enteredLockType = LockTypes.None;
-                    return;
-            }
-        }
-
-        public void Dispose()
-        {
-            GC.SuppressFinalize(this);
-            ExitLock();
-        }
-
-        ~ReaderWriterLockMgr()
-        {
-            ExitLock();
+            case LockTypes.Read:
+                rwLock.ExitReadLock();
+                enteredLockType = LockTypes.None;
+                return;
+            case LockTypes.Write:
+                rwLock.ExitWriteLock();
+                enteredLockType = LockTypes.None;
+                return;
+            case LockTypes.Upgradeable:
+                rwLock.ExitUpgradeableReadLock();
+                enteredLockType = LockTypes.None;
+                return;
         }
     }
 
-    internal static ReaderWriterLockMgr GetWriteLock() => new();
+    public void Dispose()
+    {
+        GC.SuppressFinalize(this);
+        ExitLock();
+    }
+
+    ~ReaderWriterLockMgr()
+    {
+        ExitLock();
+    }
 }

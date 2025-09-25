@@ -114,7 +114,7 @@ public struct EntitiesEnumerator : IEnumerator<Entity>
         archetypePos    = -1;
         checkChange     = query.checkChange;
         if (checkChange) {
-            EcsRwLock.Instance.EnterReadLock();
+            store.RwLock.EnterReadLock();
             Interlocked.Increment(ref store.internBase.activeQueryLoops);
         }
     }
@@ -169,7 +169,7 @@ public struct EntitiesEnumerator : IEnumerator<Entity>
     public void Dispose() {
         if (checkChange) {
             Interlocked.Decrement(ref store.internBase.activeQueryLoops);
-            EcsRwLock.Instance.ExitReadLock();
+            store.RwLock.ExitReadLock();
         }
     }
 }

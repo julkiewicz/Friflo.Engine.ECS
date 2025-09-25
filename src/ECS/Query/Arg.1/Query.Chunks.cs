@@ -100,7 +100,7 @@ public struct ChunkEnumerator<T1> : IEnumerator<Chunks<T1>>
         archetypePos    = -1;
         if (query.checkChange) {
             store = query.store;
-            EcsRwLock.Instance.EnterReadLock();
+            store.RwLock.EnterReadLock();
             Interlocked.Increment(ref store.internBase.activeQueryLoops);
         }
     }
@@ -162,7 +162,7 @@ public struct ChunkEnumerator<T1> : IEnumerator<Chunks<T1>>
     public void Dispose() {
         if (store != null) {
             Interlocked.Decrement(ref store.internBase.activeQueryLoops);
-            EcsRwLock.Instance.ExitReadLock();
+            store.RwLock.ExitReadLock();
         }
     }
 }

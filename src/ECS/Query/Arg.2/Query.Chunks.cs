@@ -109,7 +109,7 @@ where T2 : struct
         archetypePos    = -1;
         if (query.checkChange) {
             store = query.store;
-            EcsRwLock.Instance.EnterReadLock();
+            store.RwLock.EnterReadLock();
             Interlocked.Increment(ref store.internBase.activeQueryLoops);
         }
     }
@@ -173,7 +173,7 @@ where T2 : struct
     public void Dispose() {
         if (store != null) {
             Interlocked.Decrement(ref store.internBase.activeQueryLoops);
-            EcsRwLock.Instance.ExitReadLock();
+            store.RwLock.ExitReadLock();
         }
     }
 }

@@ -154,13 +154,6 @@ public sealed class CommandBuffer : ICommandBuffer
     /// </exception>
     public void Playback()
     {
-        // TODO: Move after "if (!intern.hasCommands)"
-        using var @lock = EcsRwLock.GetWriteLock();
-        @lock.EnterWriteLock();
-
-        if (intern.store.internBase.activeQueryLoops > 0) {
-            throw EntityStoreBase.StructuralChangeWithinQueryLoop(EntityStore);
-        }
         if (!intern.hasCommands) {
             // early out if command buffer is still empty 
             if (!intern.reuseBuffer) {
@@ -168,6 +161,14 @@ public sealed class CommandBuffer : ICommandBuffer
             }
             return;
         }
+        
+        using var @lock = intern.store.GetScopedLock();
+        @lock.EnterWriteLock();
+
+        if (intern.store.internBase.activeQueryLoops > 0) {
+            throw EntityStoreBase.StructuralChangeWithinQueryLoop();
+        }
+        
         var playback            = intern.store.GetPlayback();
         var hasComponentChanges = intern.changedComponentTypes.Count > 0;
         try {

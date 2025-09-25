@@ -96,7 +96,7 @@ public partial class EntityStore
     /// </remarks>
     public static void CopyEntity(Entity source, Entity target)
     {
-        using var @lock = EcsRwLock.GetWriteLock();
+        using var @lock = target.store.GetScopedLock();
         @lock.EnterWriteLock();
 
         var sourceArch      = source.GetArchetype() ?? throw EntityArgumentNullException(source, nameof(source));
@@ -104,7 +104,7 @@ public partial class EntityStore
         var targetStore     = target.store;
         if (source.store == targetStore) {
             if (targetStore.internBase.activeQueryLoops > 0) {
-                throw StructuralChangeWithinQueryLoop(targetStore);
+                throw StructuralChangeWithinQueryLoop();
             }
         }
         var targetArch = targetStore.GetArchetype(sourceArch.componentTypes, sourceArch.Tags);

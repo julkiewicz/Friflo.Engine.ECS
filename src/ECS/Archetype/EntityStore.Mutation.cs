@@ -114,11 +114,11 @@ public partial class EntityStoreBase
         ref int         compIndex,
         ref int         archIndex)
     {
-        using var @lock = EcsRwLock.GetWriteLock();
+        using var @lock = store.GetScopedLock();
         @lock.EnterWriteLock();
 
         if (store.internBase.activeQueryLoops > 0) {
-            throw StructuralChangeWithinQueryLoop(store);
+            throw StructuralChangeWithinQueryLoop();
         }
         var arch        = archetype;
         var curTags     = arch.tags;
@@ -147,11 +147,11 @@ public partial class EntityStoreBase
         ref int         compIndex,
         ref int         archIndex)
     {
-        using var @lock = EcsRwLock.GetWriteLock();
+        using var @lock = store.GetScopedLock();
         @lock.EnterWriteLock();
 
         if (store.internBase.activeQueryLoops > 0) {
-            throw StructuralChangeWithinQueryLoop(store);
+            throw StructuralChangeWithinQueryLoop();
         }
         var arch        = archetype;
         var curTags     = arch.tags;

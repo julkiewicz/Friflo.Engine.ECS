@@ -99,7 +99,7 @@ public abstract partial class EntityStoreBase
     /// <summary>Contains state of <see cref="EntityStoreBase"/> not relevant for application development.</summary>
     /// <remarks>Declaring internal state fields in this struct remove noise in debugger.</remarks>
     internal struct InternBase {
-        internal        volatile int                                activeQueryLoops;          //  4
+        internal        int                                         activeQueryLoops;       //  4
         //
         internal        long                                        archetypesCapacity;     // 16   - sum of all Archetype capacities
         internal        double                                      shrinkRatio;            //  8
@@ -209,8 +209,8 @@ public abstract partial class EntityStoreBase
             throw EntityStoreBase.StructuralChangeWithinQueryLoop();
         }
     */
-    internal static StructuralChangeException StructuralChangeWithinQueryLoop(EntityStoreBase store) {
-        return new StructuralChangeException($"within query loops ({store.internBase.activeQueryLoops}, R: {EcsRwLock.Instance.IsReadLockHeld} / {EcsRwLock.Instance.CurrentReadCount}, W: {EcsRwLock.Instance.IsWriteLockHeld}). See: https://friflo.gitbook.io/friflo.engine.ecs/documentation/query#structuralchangeexception");
+    internal static StructuralChangeException StructuralChangeWithinQueryLoop() {
+        return new StructuralChangeException("within query loops. See: https://friflo.gitbook.io/friflo.engine.ecs/documentation/query#structuralchangeexception");
     }
     
     /*

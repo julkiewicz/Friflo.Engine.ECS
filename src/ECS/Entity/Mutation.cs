@@ -17,11 +17,11 @@ public readonly partial struct  Entity
     /// <returns>true - component is newly added to the entity.<br/> false - component is updated.</returns>
     public bool AddComponent<T>(in T component)      where T : struct, IComponent
     {
-        using var @lock = EcsRwLock.GetWriteLock();
+        using var @lock = store.GetScopedLock();
         @lock.EnterWriteLock();
 
         if (store.internBase.activeQueryLoops > 0) {
-            throw EntityStoreBase.StructuralChangeWithinQueryLoop(store);
+            throw EntityStoreBase.StructuralChangeWithinQueryLoop();
         }
         int id          = Id;
         var localStore  = store;
@@ -77,11 +77,11 @@ public readonly partial struct  Entity
     /// </remarks>
     public bool RemoveComponent<T>()            where T : struct, IComponent
     {
-        using var @lock = EcsRwLock.GetWriteLock();
+        using var @lock = store.GetScopedLock();
         @lock.EnterWriteLock();
 
         if (store.internBase.activeQueryLoops > 0) {
-            throw EntityStoreBase.StructuralChangeWithinQueryLoop(store);
+            throw EntityStoreBase.StructuralChangeWithinQueryLoop();
         }
         var id              = Id;
         int structIndex     = StructInfo<T>.Index;

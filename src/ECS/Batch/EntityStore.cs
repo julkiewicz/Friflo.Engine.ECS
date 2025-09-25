@@ -36,11 +36,11 @@ public partial class EntityStoreBase
     
     internal void ApplyBatchTo(EntityBatch batch, int entityId)
     {
-        using var @lock = EcsRwLock.GetWriteLock();
+        using var @lock = GetScopedLock();
         @lock.EnterWriteLock();
 
         if (internBase.activeQueryLoops > 0) {
-            throw StructuralChangeWithinQueryLoop(this);
+            throw StructuralChangeWithinQueryLoop();
         }
         ref var node    = ref ((EntityStore)this).nodes[entityId];
         var archetype   = node.archetype;

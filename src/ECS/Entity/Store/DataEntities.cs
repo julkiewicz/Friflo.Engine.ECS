@@ -93,11 +93,11 @@ public partial class EntityStore
             throw new ArgumentNullException(nameof(dataEntity));
         }
         
-        using var @lock = EcsRwLock.GetWriteLock();
+        using var @lock = GetScopedLock();
         @lock.EnterWriteLock();
 
         if (internBase.activeQueryLoops > 0) {
-            throw StructuralChangeWithinQueryLoop(this);
+            throw StructuralChangeWithinQueryLoop();
         }
         Entity entity;
         if (intern.pidType == PidType.UsePidAsId) {
