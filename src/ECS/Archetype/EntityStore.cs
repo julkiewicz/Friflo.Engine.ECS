@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using Friflo.Engine.ECS.ReadyCode;
 using Friflo.Engine.ECS.Utils;
 using static System.Diagnostics.DebuggerBrowsableState;
 using Browse = System.Diagnostics.DebuggerBrowsableAttribute;
@@ -208,8 +209,8 @@ public abstract partial class EntityStoreBase
             throw EntityStoreBase.StructuralChangeWithinQueryLoop();
         }
     */
-    internal static StructuralChangeException StructuralChangeWithinQueryLoop() {
-        return new StructuralChangeException("within query loop. See: https://friflo.gitbook.io/friflo.engine.ecs/documentation/query#structuralchangeexception");
+    internal StructuralChangeException StructuralChangeWithinQueryLoop() {
+        return new StructuralChangeException($"within query loops ({internBase.activeQueryLoops}, R: {EcsRwLock.Instance.IsReadLockHeld} / {EcsRwLock.Instance.CurrentReadCount}, W: {EcsRwLock.Instance.IsWriteLockHeld}). See: https://friflo.gitbook.io/friflo.engine.ecs/documentation/query#structuralchangeexception");
     }
     
     /*

@@ -5,10 +5,8 @@ namespace Friflo.Engine.ECS.ReadyCode;
 
 internal static class EcsRwLock
 {
-    internal sealed class ReaderWriterLockMgr : IDisposable
+    internal sealed class ReaderWriterLockMgr(ReaderWriterLockSlim readerWriterLock) : IDisposable
     {
-        private readonly ReaderWriterLockSlim readerWriterLock = null;
-
         private enum LockTypes
         {
             None,
@@ -19,52 +17,46 @@ internal static class EcsRwLock
 
         private LockTypes enteredLockType = LockTypes.None;
 
-        public ReaderWriterLockMgr(ReaderWriterLockSlim readerWriterLock)
-        {
-            this.readerWriterLock = readerWriterLock;
-        }
-
-        public void EnterReadLock()
+        internal void EnterReadLock()
         {
             readerWriterLock.EnterReadLock();
             enteredLockType = LockTypes.Read;
         }
 
-        public void EnterWriteLock()
+        internal void EnterWriteLock()
         {
             readerWriterLock.EnterWriteLock();
             enteredLockType = LockTypes.Write;
         }
 
-        public void EnterUpgradeableReadLock()
+        internal void EnterUpgradeableReadLock()
         {
             readerWriterLock.EnterUpgradeableReadLock();
             enteredLockType = LockTypes.Upgradeable;
         }
 
-        public bool ExitLock()
+        private void ExitLock()
         {
             switch (enteredLockType)
             {
                 case LockTypes.Read:
                     readerWriterLock.ExitReadLock();
                     enteredLockType = LockTypes.None;
-                    return true;
+                    return;
                 case LockTypes.Write:
                     readerWriterLock.ExitWriteLock();
                     enteredLockType = LockTypes.None;
-                    return true;
+                    return;
                 case LockTypes.Upgradeable:
                     readerWriterLock.ExitUpgradeableReadLock();
                     enteredLockType = LockTypes.None;
-                    return true;
+                    return;
             }
-
-            return false;
         }
 
         public void Dispose()
         {
+            GC.SuppressFinalize(this);
             ExitLock();
         }
 
@@ -76,5 +68,5 @@ internal static class EcsRwLock
 
     internal static readonly ReaderWriterLockSlim Instance = new(LockRecursionPolicy.SupportsRecursion);
 
-    public static ReaderWriterLockMgr GetWriteLock() => new(Instance);
+    internal static ReaderWriterLockMgr GetWriteLock() => new(Instance);
 }

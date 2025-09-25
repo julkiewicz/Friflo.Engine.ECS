@@ -4,6 +4,7 @@
 using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using Friflo.Engine.ECS.ReadyCode;
 using static Friflo.Engine.ECS.StoreOwnership;
 using static Friflo.Engine.ECS.TreeMembership;
 
@@ -95,6 +96,9 @@ public partial class EntityStore
     /// </remarks>
     public static void CopyEntity(Entity source, Entity target)
     {
+        using var @lock = EcsRwLock.GetWriteLock();
+        @lock.EnterWriteLock();
+
         var sourceArch      = source.GetArchetype() ?? throw EntityArgumentNullException(source, nameof(source));
         var curTargetArch   = target.GetArchetype() ?? throw EntityArgumentNullException(target, nameof(target));
         var targetStore     = target.store;
