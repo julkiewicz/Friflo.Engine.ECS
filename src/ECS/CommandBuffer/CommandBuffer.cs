@@ -154,6 +154,7 @@ public sealed class CommandBuffer : ICommandBuffer
     /// </exception>
     public void Playback()
     {
+        // TODO: Move after "if (!intern.hasCommands)"
         using var @lock = EcsRwLock.GetWriteLock();
         @lock.EnterWriteLock();
 

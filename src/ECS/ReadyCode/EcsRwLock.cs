@@ -5,6 +5,8 @@ namespace Friflo.Engine.ECS.ReadyCode;
 
 internal static class EcsRwLock
 {
+    internal static volatile ReaderWriterLockSlim Instance = new(LockRecursionPolicy.SupportsRecursion);
+
     internal sealed class ReaderWriterLockMgr(ReaderWriterLockSlim readerWriterLock) : IDisposable
     {
         private enum LockTypes
@@ -65,8 +67,6 @@ internal static class EcsRwLock
             ExitLock();
         }
     }
-
-    internal static readonly ReaderWriterLockSlim Instance = new(LockRecursionPolicy.SupportsRecursion);
 
     internal static ReaderWriterLockMgr GetWriteLock() => new(Instance);
 }
