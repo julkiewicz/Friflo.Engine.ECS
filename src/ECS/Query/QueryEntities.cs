@@ -7,6 +7,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using Friflo.Engine.ECS.ReadyCode;
 using static System.Diagnostics.DebuggerBrowsableState;
 using Browse = System.Diagnostics.DebuggerBrowsableAttribute;
 
@@ -20,21 +21,6 @@ namespace Friflo.Engine.ECS;
 [DebuggerTypeProxy(typeof(QueryEntitiesDebugView))]
 public readonly struct QueryEntities  : IEnumerable <Entity>
 {
-    public static long NextId;
-    public static ConcurrentDictionary<long, string> LastQueryTraces = [];
-    
-    public static long AtomicInsertTrace()
-    {
-        var id = System.Threading.Interlocked.Increment(ref NextId);
-        LastQueryTraces.TryAdd(id, Environment.StackTrace);
-        return id;
-    }
-    
-    public static void RemoveTrace(long id)
-    {
-        LastQueryTraces.TryRemove(id, out _);
-    }
-    
     /// <summary> Return the number of entities matching the query. </summary>
     public              int             Count       => query.Count;
     
@@ -106,7 +92,6 @@ public readonly struct QueryEntities  : IEnumerable <Entity>
 /// </summary>
 public struct EntitiesEnumerator : IEnumerator<Entity>
 {
-    private readonly    long queryId;          //  8
     private readonly    EntityStore store;          //  8
     private readonly    Archetypes  archetypes;     // 16
     private readonly    bool        checkChange;    //  1
@@ -128,8 +113,8 @@ public struct EntitiesEnumerator : IEnumerator<Entity>
         archetypePos    = -1;
         checkChange     = query.checkChange;
         if (checkChange) {
+            EcsRwLock.Instance.EnterReadLock();
             store.internBase.activeQueryLoops++;
-            queryId = QueryEntities.AtomicInsertTrace();
         }
     }
     
@@ -183,7 +168,7 @@ public struct EntitiesEnumerator : IEnumerator<Entity>
     public void Dispose() {
         if (checkChange) {
             store.internBase.activeQueryLoops--;
-            QueryEntities.RemoveTrace(queryId);
+            EcsRwLock.Instance.ExitReadLock();
         }
     }
 }

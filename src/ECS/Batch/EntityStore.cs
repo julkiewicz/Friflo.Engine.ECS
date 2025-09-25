@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Ullrich Praetz - https://github.com/friflo. All rights reserved.
 // See LICENSE file in the project root for full license information.
 
+using Friflo.Engine.ECS.ReadyCode;
 using static System.Diagnostics.DebuggerBrowsableState;
 using Browse = System.Diagnostics.DebuggerBrowsableAttribute;
 
@@ -35,6 +36,9 @@ public partial class EntityStoreBase
     
     internal void ApplyBatchTo(EntityBatch batch, int entityId)
     {
+        using var @lock = EcsRwLock.GetWriteLock();
+        @lock.EnterWriteLock();
+
         if (internBase.activeQueryLoops > 0) {
             throw StructuralChangeWithinQueryLoop();
         }

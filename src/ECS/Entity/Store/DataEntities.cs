@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using Friflo.Engine.ECS.ReadyCode;
 using Friflo.Engine.ECS.Serialize;
 using Friflo.Engine.ECS.Utils;
 using Friflo.Json.Fliox;
@@ -91,6 +92,10 @@ public partial class EntityStore
         if (dataEntity == null) {
             throw new ArgumentNullException(nameof(dataEntity));
         }
+        
+        using var @lock = EcsRwLock.GetWriteLock();
+        @lock.EnterWriteLock();
+
         if (internBase.activeQueryLoops > 0) {
             throw StructuralChangeWithinQueryLoop();
         }

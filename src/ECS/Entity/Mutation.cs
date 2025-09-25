@@ -2,6 +2,7 @@
 // See LICENSE file in the project root for full license information.
 
 using Friflo.Engine.ECS.Index;
+using Friflo.Engine.ECS.ReadyCode;
 
 // ReSharper disable once CheckNamespace
 namespace Friflo.Engine.ECS;
@@ -16,6 +17,9 @@ public readonly partial struct  Entity
     /// <returns>true - component is newly added to the entity.<br/> false - component is updated.</returns>
     public bool AddComponent<T>(in T component)      where T : struct, IComponent
     {
+        using var @lock = EcsRwLock.GetWriteLock();
+        @lock.EnterWriteLock();
+
         if (store.internBase.activeQueryLoops > 0) {
             throw EntityStoreBase.StructuralChangeWithinQueryLoop();
         }
@@ -73,6 +77,9 @@ public readonly partial struct  Entity
     /// </remarks>
     public bool RemoveComponent<T>()            where T : struct, IComponent
     {
+        using var @lock = EcsRwLock.GetWriteLock();
+        @lock.EnterWriteLock();
+
         if (store.internBase.activeQueryLoops > 0) {
             throw EntityStoreBase.StructuralChangeWithinQueryLoop();
         }

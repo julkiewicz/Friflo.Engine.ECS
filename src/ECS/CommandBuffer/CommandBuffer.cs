@@ -2,6 +2,7 @@
 // See LICENSE file in the project root for full license information.
 
 using System;
+using Friflo.Engine.ECS.ReadyCode;
 using static System.Diagnostics.DebuggerBrowsableState;
 using Browse = System.Diagnostics.DebuggerBrowsableAttribute;
 
@@ -153,6 +154,9 @@ public sealed class CommandBuffer : ICommandBuffer
     /// </exception>
     public void Playback()
     {
+        using var @lock = EcsRwLock.GetWriteLock();
+        @lock.EnterWriteLock();
+
         if (intern.store.internBase.activeQueryLoops > 0) {
             throw EntityStoreBase.StructuralChangeWithinQueryLoop();
         }

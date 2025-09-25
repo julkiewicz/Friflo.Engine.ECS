@@ -7,6 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using Friflo.Engine.ECS.ReadyCode;
 
 // ReSharper disable InconsistentNaming
 // ReSharper disable once CheckNamespace
@@ -96,7 +97,6 @@ where T1 : struct
 where T2 : struct
 where T3 : struct
 {
-    private readonly    long                     queryId;   //  4
     private readonly    int                     structIndex1;   //  4
     private readonly    int                     structIndex2;   //  4
     private readonly    int                     structIndex3;   //  4
@@ -117,8 +117,8 @@ where T3 : struct
         archetypePos    = -1;
         if (query.checkChange) {
             store = query.store;
+            EcsRwLock.Instance.EnterReadLock();
             store.internBase.activeQueryLoops++;
-            queryId = QueryEntities.AtomicInsertTrace();
         }
     }
     
@@ -183,7 +183,7 @@ where T3 : struct
     public void Dispose() {
         if (store != null) {
             store.internBase.activeQueryLoops--;
-            QueryEntities.RemoveTrace(queryId);
+            EcsRwLock.Instance.ExitReadLock();
         }
     }
 }

@@ -5,6 +5,7 @@
 // Hard rule: this file MUST NOT use type: Entity
 
 
+using Friflo.Engine.ECS.ReadyCode;
 using Friflo.Engine.ECS.Utils;
 
 // ReSharper disable ConvertToAutoPropertyWithPrivateSetter
@@ -113,6 +114,9 @@ public partial class EntityStoreBase
         ref int         compIndex,
         ref int         archIndex)
     {
+        using var @lock = EcsRwLock.GetWriteLock();
+        @lock.EnterWriteLock();
+
         if (store.internBase.activeQueryLoops > 0) {
             throw StructuralChangeWithinQueryLoop();
         }
@@ -143,6 +147,9 @@ public partial class EntityStoreBase
         ref int         compIndex,
         ref int         archIndex)
     {
+        using var @lock = EcsRwLock.GetWriteLock();
+        @lock.EnterWriteLock();
+
         if (store.internBase.activeQueryLoops > 0) {
             throw StructuralChangeWithinQueryLoop();
         }

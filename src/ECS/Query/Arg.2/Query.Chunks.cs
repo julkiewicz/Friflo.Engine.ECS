@@ -7,6 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using Friflo.Engine.ECS.ReadyCode;
 
 // ReSharper disable InconsistentNaming
 // ReSharper disable once CheckNamespace
@@ -89,7 +90,6 @@ public struct ChunkEnumerator<T1,T2> : IEnumerator<Chunks<T1,T2>>
 where T1 : struct
 where T2 : struct
 {
-    private readonly    long                     queryId;   //  4
     private readonly    int                     structIndex1;   //  4
     private readonly    int                     structIndex2;   //  4
     //
@@ -108,8 +108,8 @@ where T2 : struct
         archetypePos    = -1;
         if (query.checkChange) {
             store = query.store;
+            EcsRwLock.Instance.EnterReadLock();
             store.internBase.activeQueryLoops++;
-            queryId = QueryEntities.AtomicInsertTrace();
         }
     }
     
@@ -172,7 +172,7 @@ where T2 : struct
     public void Dispose() {
         if (store != null) {
             store.internBase.activeQueryLoops--;
-            QueryEntities.RemoveTrace(queryId);
+            EcsRwLock.Instance.ExitReadLock();
         }
     }
 }

@@ -4,6 +4,7 @@
 // Hard rule: this file MUST NOT use type: Entity
 
 using System;
+using Friflo.Engine.ECS.ReadyCode;
 
 // ReSharper disable InlineTemporaryVariable
 // ReSharper disable ArrangeTrailingCommaInMultilineLists
@@ -129,6 +130,9 @@ public partial class EntityStoreBase
     
     internal Archetype GetArchetypeAdd(Archetype type, in ComponentTypes addComponents, in Tags addTags)
     {
+        using var @lock = EcsRwLock.GetWriteLock();
+        @lock.EnterWriteLock();
+
         if (internBase.activeQueryLoops > 0) {
             throw StructuralChangeWithinQueryLoop();
         }
@@ -153,6 +157,9 @@ public partial class EntityStoreBase
     
     internal Archetype GetArchetypeRemove(Archetype type, in ComponentTypes removeComponents, in Tags removeTags)
     {
+        using var @lock = EcsRwLock.GetWriteLock();
+        @lock.EnterWriteLock();
+        
         if (internBase.activeQueryLoops > 0) {
             throw StructuralChangeWithinQueryLoop();
         }
