@@ -81,6 +81,36 @@ public sealed class GenericInstanceTypeAttribute : Attribute {
 public sealed class BlittableTypeAttribute : Attribute
 { }
 
+[AttributeUsage(AttributeTargets.Assembly, AllowMultiple = true)]
+public sealed class GlobalGenericInstanceTypeAttribute : Attribute {
+    
+    public Type GenericDefType { get; }
+    public string ComponentKey { get; }
+    public Type[] Arguments { get; }
+
+    /// <summary> Register generic component / tag type with one generic parameter. </summary>
+    public GlobalGenericInstanceTypeAttribute(Type genericDefType, string componentKey, Type type) {
+        GenericDefType = genericDefType;
+        ComponentKey = componentKey;
+        Arguments = [type];
+    }
+
+    /// <summary> Register generic component / tag type with two generic parameters. </summary>
+    public GlobalGenericInstanceTypeAttribute(Type genericDefType, string componentKey, Type type1, Type type2) {
+        GenericDefType = genericDefType;
+        ComponentKey = componentKey;
+        Arguments = [type1, type2];
+    }
+
+    /// <summary> Register generic component / tag type with three generic parameters. </summary>
+    public GlobalGenericInstanceTypeAttribute(Type genericDefType, string componentKey, Type type1, Type type2,
+        Type type3) {
+        GenericDefType = genericDefType;
+        ComponentKey = componentKey;
+        Arguments = [type1, type2, type3];
+    }
+}
+
 
 #region Friflo ImGui attributes 
 

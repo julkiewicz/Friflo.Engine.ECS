@@ -121,6 +121,8 @@ internal static class SchemaUtils
         return type.Name;
     }
     
+    private static Dictionary<Assembly, GlobalGenericInstanceTypeAttribute[]> _globalGenericInstanceTypeCache = new();
+    
     internal static GenericInstanceType[] GetGenericInstanceTypes(Type type)
     {
         var list = new List<GenericInstanceType>();
@@ -131,6 +133,22 @@ internal static class SchemaUtils
             var args = attr.ConstructorArguments;
             GenericInstanceType.Add(list, args);
         }
+
+        foreach (var asm in AppDomain.CurrentDomain.GetAssemblies()) {
+            if (!_globalGenericInstanceTypeCache.TryGetValue(asm, out var globalAttrs)) {
+                globalAttrs = asm.GetCustomAttributes<GlobalGenericInstanceTypeAttribute>().ToArray();
+                _globalGenericInstanceTypeCache[asm] = globalAttrs;
+            }
+            
+            foreach (var attr in globalAttrs) {
+                if (attr.GenericDefType != type) {
+                    continue;
+                }
+
+                GenericInstanceType.Add(list, attr.ComponentKey, attr.Arguments);
+            }
+        }
+        
         return list.ToArray();
     }
     
@@ -232,8 +250,8 @@ internal readonly struct GenericInstanceType
     internal readonly Type[] types;
     
     private GenericInstanceType(string key, Type[] types) {
-        this.key    = key;
-        this.types  = types;
+        this.key     = key;
+        this.types   = types;
     }
     
     internal static void Add(List<GenericInstanceType> list, IList<CustomAttributeTypedArgument> args)
@@ -243,5 +261,13 @@ internal readonly struct GenericInstanceType
             case 3: list.Add(new GenericInstanceType((string)args[0].Value, new [] { (Type)args[1].Value, (Type)args[2].Value                      })); break;
             case 4: list.Add(new GenericInstanceType((string)args[0].Value, new [] { (Type)args[1].Value, (Type)args[2].Value, (Type)args[3].Value })); break;
         }
+    }
+    
+    internal static void Add(List<GenericInstanceType> list, string key, Type[] args)
+    {
+        list.Add(new GenericInstanceType(
+            key: key,
+            types: args
+        ));
     }
 } 
