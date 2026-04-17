@@ -56,6 +56,9 @@ public sealed class Archetype
                     public              Span<TComponent>    Components<TComponent>() where TComponent : struct
                         => new (((StructHeap<TComponent>)heapMap[StructInfo<TComponent>.Index]).components, 0, entityCount);
     
+    public              (IntPtr, int)    ComponentsAsUnsafeSpan(Type componentType)
+        => new (heapMap[StructInfo.FromType(componentType)].ReadyMGetPtrToFirst(), entityCount);
+    
     /// <summary>The <see cref="EntityStore"/> owning the archetype.</summary>
                     public              EntityStoreBase     Store           => store;
     

@@ -42,6 +42,7 @@ internal abstract class StructHeap : IComponentStash
     internal  abstract  object      GetComponentDebug       (int compIndex);
     internal  abstract  Bytes       Write                   (ObjectWriter writer, int compIndex);
     internal  abstract  void        Read                    (ObjectReader reader, int compIndex, JsonValue json);
+    internal  abstract  IntPtr      ReadyMGetPtrToFirst     ();
     internal  abstract  void        UpdateIndex             (Entity entity);
     internal  abstract  void        AddIndex                (Entity entity);
     internal  abstract  void        RemoveIndex             (Entity entity);

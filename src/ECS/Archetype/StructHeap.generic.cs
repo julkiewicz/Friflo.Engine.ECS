@@ -33,7 +33,19 @@ internal sealed class StructHeap<T> : StructHeap, IComponentStash<T>
     // --- internal fields
     internal            T[]                 components;     //  8
     internal            T                   componentStash; //  sizeof(T)
-    
+
+    internal override IntPtr ReadyMGetPtrToFirst()
+    {
+        // we are inside GC.TryStartNoGCRegion, so we can get the pointer to the first component without pinning
+        unsafe
+        {
+            fixed (T* ptr = components)
+            {
+                return (IntPtr)ptr;
+            }
+        }
+    }
+
     internal StructHeap(int structIndex)
         : base (structIndex)
     {
