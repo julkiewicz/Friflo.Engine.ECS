@@ -40,6 +40,8 @@ public readonly struct Chunk<T>
     
     // ReSharper disable once NotAccessedField.Local
     private  readonly   int         start;                  //  4
+
+    public int Start => start;
     
     /// <summary>
     /// Return the components as a <see cref="Span{TTo}"/> of type <typeparamref name="TTo"/> - which can be assigned to Vector256{TTo}'s.<br/>
