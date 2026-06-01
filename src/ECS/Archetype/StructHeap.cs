@@ -18,7 +18,7 @@ namespace Friflo.Engine.ECS;
 /// - to enable maximum efficiency when GC iterate <see cref="Archetype.structHeaps"/> <see cref="Archetype.heapMap"/>
 ///   for collection.
 /// </remarks>
-internal abstract class StructHeap : IComponentStash
+public abstract class StructHeap : IComponentStash
 {
     // Note: Should not contain any other field. See class <remarks>
     // --- internal fields
@@ -42,7 +42,7 @@ internal abstract class StructHeap : IComponentStash
     internal  abstract  object      GetComponentDebug       (int compIndex);
     internal  abstract  Bytes       Write                   (ObjectWriter writer, int compIndex);
     internal  abstract  void        Read                    (ObjectReader reader, int compIndex, JsonValue json);
-    internal  abstract  IntPtr      ReadyMGetPtrToFirst     ();
+    public  abstract  IntPtr      ReadyMGetPtrToFirst     ();
     internal  abstract  void        UpdateIndex             (Entity entity);
     internal  abstract  void        AddIndex                (Entity entity);
     internal  abstract  void        RemoveIndex             (Entity entity);
