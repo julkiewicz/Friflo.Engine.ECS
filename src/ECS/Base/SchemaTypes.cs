@@ -66,7 +66,11 @@ internal sealed class SchemaTypes
         foreach (var type in componentTypes) {
             
             SchemaType schemaType;
-            if (typeof(IComponent).IsAssignableFrom(type.type)) {
+            if (typeof(PluginComponentMarker).IsAssignableFrom(type.type))
+            {
+                schemaType = new PluginComponentType(components.Count + 1, 4); // TODO: Hard-coded stride
+            }
+            else if (typeof(IComponent).IsAssignableFrom(type.type)) {
                 schemaType = CreateComponentType(type.type);
             } else {
                 schemaType = CreateRelationType(type.type);
@@ -109,6 +113,8 @@ internal sealed class SchemaTypes
                 componentTypes.Add(buffer[n]);
             }
         }
+        
+        indexCount += componentTypes.Count; // TODO: Hack to avoid IndexOutOfBounds if plugin components are registered before typed ones
     }
 
     private const BindingFlags Flags    = BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.InvokeMethod;

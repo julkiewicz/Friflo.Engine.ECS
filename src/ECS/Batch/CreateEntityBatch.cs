@@ -217,6 +217,18 @@ public sealed class CreateEntityBatch
     }
     
     /// <summary>
+    /// Add a component that will be added to the entity when calling <see cref="CreateEntity()"/>. 
+    /// </summary>
+    public CreateEntityBatch Add(int structIndex, int stride)
+    {
+        if (isReturned) throw BatchAlreadyReturnedException();
+        archetype       = null;
+        componentsCreate.bitSet.SetBit(structIndex);
+        batchComponents[structIndex] ??= new PluginBatchComponent(stride);
+        return this;
+    }
+    
+    /// <summary>
     /// Get a component by reference previously added to the batch.<br/>
     /// This enables creation of multiple entities using the same batch. 
     /// </summary>

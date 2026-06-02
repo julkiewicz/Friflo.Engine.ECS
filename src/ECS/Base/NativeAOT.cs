@@ -78,13 +78,13 @@ A type initializer threw an exception. To determine which type, inspect the Inne
         Instance        = this;
         return entitySchema;
     }
-    
+
     public EntitySchema CreateSchema()
     {
         Console.WriteLine("NativeAOT.CreateSchema()");
         return CreateSchemaInternal();
     }
-    
+
     private void InitSchema()
     {
         if (Instance?.entitySchema != null) {

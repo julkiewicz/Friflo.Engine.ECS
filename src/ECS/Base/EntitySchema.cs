@@ -120,7 +120,12 @@ public sealed class EntitySchema
                     DuplicateComponentKey(componentType);
                 }
             }
-            componentTypeByType.Add (componentType.Type,            componentType);
+
+            if (componentType.Type != typeof(PluginComponentMarker))
+            {
+                componentTypeByType.Add(componentType.Type, componentType);
+            }
+            
             components              [componentType.StructIndex] =   componentType;
             if (componentType.RelationType == null) {
                 componentTypes.Add(new ComponentTypes(componentType));

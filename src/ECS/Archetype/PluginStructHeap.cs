@@ -35,9 +35,9 @@ public sealed class PluginStructHeap : StructHeap
     internal PluginStructHeap(int structIndex, int stride)
         : base(structIndex)
     {
-        Stride          = stride;
-        components      = new byte[ArchetypeUtils.MinCapacity * stride];
-        componentStash  = new byte[stride];
+        Stride = stride;
+        components = new byte[ArchetypeUtils.MinCapacity * stride];
+        componentStash = new byte[stride];
     }
 
     // -------------------------------------------------------------------------
@@ -106,16 +106,33 @@ public sealed class PluginStructHeap : StructHeap
         Buffer.BlockCopy(components, compIndex * Stride, componentStash, 0, Stride);
     }
 
-    internal override void UpdateIndex(Entity entity) { }
-    internal override void AddIndex   (Entity entity) { }
-    internal override void RemoveIndex(Entity entity) { }
+    internal override void UpdateIndex(Entity entity)
+    {
+    }
+
+    internal override void AddIndex(Entity entity)
+    {
+    }
+
+    internal override void RemoveIndex(Entity entity)
+    {
+    }
 
     // -------------------------------------------------------------------------
     // Batch operations - not supported for plugin components
     // -------------------------------------------------------------------------
 
     internal override void SetBatchComponent(BatchComponent[] batchComponents, int compIndex)
-        => throw new NotSupportedException("Batch operations are not supported for plugin components.");
+    {
+        var span = new Span<byte>(components);
+        var comp = (PluginBatchComponent)batchComponents[structIndex];
+        var data = comp.Data;
+        
+        for (var ix = 0; ix < data.Length; ix++)
+        {
+            span[compIndex + ix] = data[ix];
+        }
+    }
 
     // -------------------------------------------------------------------------
     // Debug / serialization
@@ -168,4 +185,4 @@ public sealed class PluginStructHeap : StructHeap
 /// Marker type returned by <see cref="PluginStructHeap.StructType"/> for debugging.
 /// Not used as an actual ECS component.
 /// </summary>
-internal sealed class PluginComponentMarker { }
+internal class PluginComponentMarker;

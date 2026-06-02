@@ -2,7 +2,6 @@
 // Friflo.Engine.ECS fork addition.
 
 using System;
-using Friflo.Json.Fliox;
 
 // ReSharper disable once CheckNamespace
 namespace Friflo.Engine.ECS;
