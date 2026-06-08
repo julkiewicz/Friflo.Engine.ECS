@@ -2,51 +2,71 @@
 // Friflo.Engine.ECS fork addition.
 
 using System;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 // ReSharper disable once CheckNamespace
 namespace Friflo.Engine.ECS;
 
+// Copyright (c) ReadyM / ReadyCode Limited. All rights reserved.
+// Friflo.Engine.ECS fork addition.
+
+[StructLayout(LayoutKind.Sequential)]
+public struct PluginComponentRegistration
+{
+    /// <summary><c>Unsafe.SizeOf&lt;T&gt;()</c> - informs the AOT side of component stride.</summary>
+    public int Stride;
+
+    /// <summary>1 if T is blittable and raw pointer iteration is available, 0 otherwise.</summary>
+    public byte IsBlittable;
+    
+    public IntPtr AllocHeap;
+}
+
 /// <summary>
-/// A non-generic <see cref="ComponentType"/> for plugin component types registered at
-/// server startup. Each call to <see cref="NativeAOT.RegisterPluginComponent"/> produces
-/// one instance with a unique <see cref="ComponentType.StructIndex"/>.
-/// <para>
-/// The concrete struct layout is only known in the managed plugin assembly. From the ECS
-/// perspective this is an opaque blittable blob of <see cref="Stride"/> bytes.
-/// </para>
+/// Delegate matching the AllocHeap function pointer in PluginComponentRegistration.
 /// </summary>
+public delegate void AllocHeapDelegate(int capacity, IntPtr outAOTHeapPointers);
+
+
 internal sealed class PluginComponentType : ComponentType
 {
-    internal readonly int Stride;
+    public override string ToString() => $"PluginComponent[{StructIndex}] stride:{registration.Stride}";
 
-    public override string ToString() => $"PluginComponent[{StructIndex}] stride:{Stride}";
+    private readonly PluginComponentRegistration registration;
 
-    internal PluginComponentType(int structIndex, int stride)
+    // Wrapped and stored as a field so the AOT-side GC doesn't collect the delegate wrapper
+    // between archetype materializations.
+    private readonly AllocHeapDelegate allocHeap;
+
+    internal PluginComponentType(int structIndex, PluginComponentRegistration registration)
         : base(
-            componentKey:   $"plugin_{structIndex}",    // used as JSON key; serialization is unsupported
+            componentKey:   $"plugin_{structIndex}",
             structIndex:    structIndex,
             type:           typeof(PluginComponentMarker),
             indexType:      null,
             indexValueType: null,
-            byteSize:       stride,                     // ComponentType.StructSize = stride
+            byteSize:       registration.Stride,
             relationType:   null,
             keyType:        null)
     {
-        Stride = stride;
+        this.registration = registration;
+        allocHeap    = Marshal.GetDelegateForFunctionPointer<AllocHeapDelegate>(registration.AllocHeap);
 
-        // Override the blittability field that the base constructor sets via reflection.
-        // Plugin components are always blittable by contract (enforced at registration time).
-        // We use Unsafe.AsRef to write the readonly field from outside the constructor chain.
-        System.Runtime.CompilerServices.Unsafe.AsRef(in IsBlittable) = true;
+        Unsafe.AsRef(in IsBlittable) = registration.IsBlittable != 0;
     }
 
-    // CreateHeap is the only method Friflo calls routinely for plugin components.
-    // A new PluginStructHeap is created each time an archetype that contains this
-    // component type is first materialized.
-    internal override StructHeap CreateHeap() => new PluginStructHeap(StructIndex, Stride);
+    // Called by the ECS each time an archetype that contains this component type is first
+    // materialized. Calls back into CoreCLR to allocate a fresh TypedComponentHeap<T>.
+    internal override unsafe StructHeap CreateHeap()
+    {
+        // Stack-allocate the output struct. The call is synchronous, so the stack frame
+        // is alive for the duration of AllocHeapImpl writing into it.
+        AOTHeapPointers pointers;
+        allocHeap(ArchetypeUtils.MinCapacity, (IntPtr)(&pointers));
+        return new ExternallyManagedHeap(StructIndex, pointers);
+    }
 
-    // Dynamic add/remove is not supported for plugin components. Entities that carry
-    // plugin components are always created with the full archetype from the start.
     internal override bool RemoveEntityComponent(Entity entity)
         => throw new NotSupportedException(
             $"Cannot dynamically remove plugin component [{StructIndex}] from an entity. " +

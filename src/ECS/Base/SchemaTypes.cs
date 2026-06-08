@@ -68,7 +68,7 @@ internal sealed class SchemaTypes
             SchemaType schemaType;
             if (typeof(PluginComponentMarker).IsAssignableFrom(type.type))
             {
-                schemaType = new PluginComponentType(components.Count + 1, 4); // TODO: Hard-coded stride
+                schemaType = new PluginComponentType(components.Count + 1, default); // unused instance of PluginComponentRegistration
             }
             else if (typeof(IComponent).IsAssignableFrom(type.type)) {
                 schemaType = CreateComponentType(type.type);
