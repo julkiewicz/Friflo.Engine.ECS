@@ -66,8 +66,11 @@ public sealed class ExternallyManagedHeap : StructHeap
     // Blittable T: stable pinned pointer, safe to return directly.
     // Non-blittable T: call through the delegate for a live address.
     //   Valid only within a no-GC region - ScanArchetypes guarantees this.
-    public override IntPtr ReadyMGetPtrToFirst()
-        => IsBlittable ? ptr : getPtrToFirst();
+    public override IntPtr ReadyMGetPtrTo(int index)
+    {
+        var start = IsBlittable ? ptr : getPtrToFirst();
+        return start + index * Stride;
+    }
 
     // -------------------------------------------------------------------------
     // StructHeap core

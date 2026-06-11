@@ -402,6 +402,14 @@ public readonly partial struct Entity : IEquatable<Entity>, IComparable<Entity>
         throw EntityNullException();
     }
     
+    public IntPtr GetComponent(int structIndex) {
+        ref var node = ref store.nodes[Id];
+        if (node.IsAlive(Revision)) {
+            return node.archetype.heapMap[structIndex].ReadyMGetPtrTo(node.compIndex);
+        }
+        throw EntityNullException();
+    }
+    
     /// <remarks>Executes in O(1)</remarks>
     public bool     TryGetComponent<T>(out T result) where T : struct, IComponent
     {

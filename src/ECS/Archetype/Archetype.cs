@@ -57,7 +57,7 @@ public sealed partial class Archetype
                         => new (((StructHeap<TComponent>)heapMap[StructInfo<TComponent>.Index]).components, 0, entityCount);
     
     public              (IntPtr, int)    ComponentsAsUnsafeSpan(Type componentType)
-        => new (heapMap[StructInfo.FromType(componentType)].ReadyMGetPtrToFirst(), entityCount);
+        => new (heapMap[StructInfo.FromType(componentType)].ReadyMGetPtrTo(0), entityCount);
     
     /// <summary>The <see cref="EntityStore"/> owning the archetype.</summary>
                     public              EntityStoreBase     Store           => store;
