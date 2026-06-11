@@ -79,7 +79,7 @@ public struct ComponentTypes : IEnumerable<ComponentType>
         Type1:   bitSet.SetBit(indexes.T1);
     }
     
-    internal ComponentTypes(int t1)
+    public ComponentTypes(int t1)
     {
         bitSet.SetBit(t1);
     }

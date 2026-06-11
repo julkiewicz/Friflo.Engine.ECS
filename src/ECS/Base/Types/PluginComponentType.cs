@@ -21,6 +21,7 @@ public struct PluginComponentRegistration
     public byte IsBlittable;
     
     public IntPtr AllocHeap;
+    public IntPtr WriteSnapshot;
 }
 
 /// <summary>
