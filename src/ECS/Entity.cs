@@ -391,6 +391,13 @@ public readonly partial struct Entity : IEquatable<Entity>, IComparable<Entity>
         return type.heapMap[StructInfo<T>.Index] != null;
     }
     
+    /// <summary>Return true if the entity contains a component of the given type.</summary>
+    /// <param name="structIndex">The struct index of the component type. See <see cref="StructInfo{T}.Index"/>.</param>
+    public bool HasComponent (int structIndex) {
+        var type = GetArchetype() ?? throw EntityNullException();
+        return type.heapMap[structIndex] != null;
+    }
+    
     /// <summary>Return the component of the given type as a reference.</summary>
     /// <exception cref="NullReferenceException"> if entity has no component of Type <typeparamref name="T"/></exception>
     /// <remarks>Executes in O(1)</remarks>

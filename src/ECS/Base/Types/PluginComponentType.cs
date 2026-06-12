@@ -22,6 +22,7 @@ public struct PluginComponentRegistration
     
     public IntPtr AllocHeap;
     public IntPtr WriteSnapshot;
+    public IntPtr ReadSnapshot;
 }
 
 /// <summary>
