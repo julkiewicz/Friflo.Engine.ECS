@@ -412,7 +412,7 @@ public readonly partial struct Entity : IEquatable<Entity>, IComparable<Entity>
     public IntPtr GetComponent(int structIndex) {
         ref var node = ref store.nodes[Id];
         if (node.IsAlive(Revision)) {
-            return node.archetype.heapMap[structIndex].ReadyMGetPtrTo(node.compIndex);
+            return node.archetype.heapMap[structIndex].GetComponentPointer(node.compIndex);
         }
         throw EntityNullException();
     }
