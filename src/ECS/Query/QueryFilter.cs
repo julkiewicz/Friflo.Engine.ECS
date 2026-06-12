@@ -208,6 +208,47 @@ public class QueryFilter
         version++;    
     }
     
+    public QueryFilter Clone()
+    {
+        var clone = new QueryFilter
+        {
+            allTags                  = allTags,
+            anyTags                  = anyTags,
+            withoutAllTags           = withoutAllTags,
+            withoutAnyTags           = withoutAnyTags,
+
+            allComponents            = allComponents,
+            anyComponents            = anyComponents,
+            withoutAllComponents     = withoutAllComponents,
+            withoutAnyComponents     = withoutAnyComponents,
+
+            allTagsCount             = allTagsCount,
+            anyTagsCount             = anyTagsCount,
+            withoutAllTagsCount      = withoutAllTagsCount,
+
+            allComponentsCount       = allComponentsCount,
+            anyComponentsCount       = anyComponentsCount,
+            withoutAllComponentsCount = withoutAllComponentsCount,
+
+            withoutDisabled          = withoutDisabled,
+            version                  = version,
+            frozen                   = false, // the whole point
+        };
+
+        // Deep-copy the value conditions array to avoid shared state with the original.
+        var srcItems = valueConditions.List.GetArray();
+        var count    = valueConditions.List.Count;
+        var dstItems = new ValueCondition[Math.Max(count, 1)];
+        Array.Copy(srcItems, dstItems, count);
+        clone.valueConditions = new ReadOnlyList<ValueCondition>.Mutate(dstItems);
+        // Restore the correct Count since the constructor only gets the array.
+        for (int i = 0; i < count; i++) {
+            clone.valueConditions.Add(valueConditions.List[i]);
+        }
+
+        return clone;
+    }
+    
 #region filtering
     internal bool IsTagsMatch(in Tags tags)
     {
