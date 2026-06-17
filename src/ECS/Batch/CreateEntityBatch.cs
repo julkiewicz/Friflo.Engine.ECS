@@ -224,7 +224,7 @@ public sealed class CreateEntityBatch
         if (isReturned) throw BatchAlreadyReturnedException();
         archetype       = null;
         componentsCreate.bitSet.SetBit(structIndex);
-        batchComponents[structIndex] ??= new PluginBatchComponent(stride);
+        batchComponents[structIndex] ??= new ModBatchComponent(stride);
         return this;
     }
     

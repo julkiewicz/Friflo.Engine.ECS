@@ -96,7 +96,7 @@ public sealed class ExternallyManagedHeap : StructHeap
         int sourcePos, StructHeap targetHeap, int targetPos,
         in CopyContext context, long updateIndexTypes)
     {
-        // Plugin components never carry ECS indices - same path as CopyComponentTo.
+        // Mod components never carry ECS indices - same path as CopyComponentTo.
         var target = (ExternallyManagedHeap)targetHeap;
         copyTo(sourcePos, target.self, targetPos);
     }
@@ -107,11 +107,11 @@ public sealed class ExternallyManagedHeap : StructHeap
         => setRangeDefault(compIndexStart, count);
 
     // -------------------------------------------------------------------------
-    // Index support - plugin components never participate in ECS indexes
+    // Index support - mod components never participate in ECS indexes
     // -------------------------------------------------------------------------
 
     internal override void StashComponent(int compIndex) 
-        => throw new NotSupportedException("Stash is not supported for plugin components.");
+        => throw new NotSupportedException("Stash is not supported for mod components.");
 
     internal override void UpdateIndex(Entity entity) { }
     internal override void AddIndex(Entity entity) { }
@@ -123,7 +123,7 @@ public sealed class ExternallyManagedHeap : StructHeap
 
     internal override void SetBatchComponent(BatchComponent[] batchComponents, int compIndex)
     {
-        // var comp = (PluginBatchComponent)batchComponents[structIndex];
+        // var comp = (ModBatchComponent)batchComponents[structIndex];
         // actually, this will never happen?
     }
 
@@ -131,13 +131,13 @@ public sealed class ExternallyManagedHeap : StructHeap
     // Debug / serialization
     // -------------------------------------------------------------------------
 
-    internal override Type StructType => typeof(PluginComponentMarker);
+    internal override Type StructType => typeof(ModComponentMarker);
 
     public override object GetStashDebug()
-        => "(plugin component stash - opaque, inspect via CoreCLR side)";
+        => "(mod component stash - opaque, inspect via CoreCLR side)";
 
     internal override object GetComponentDebug(int compIndex)
-        => $"(plugin component [{compIndex}] - opaque, inspect via CoreCLR side)";
+        => $"(mod component [{compIndex}] - opaque, inspect via CoreCLR side)";
 
     internal override Bytes Write(ObjectWriter writer, int compIndex)
         => throw new NotSupportedException("JSON serialization is not supported for plugin components.");
@@ -170,4 +170,4 @@ public sealed class ExternallyManagedHeap : StructHeap
 /// Marker type returned by <see cref="ExternallyManagedHeap.StructType"/> for debugging.
 /// Not used as an actual ECS component.
 /// </summary>
-internal class PluginComponentMarker;
+internal class ModComponentMarker;

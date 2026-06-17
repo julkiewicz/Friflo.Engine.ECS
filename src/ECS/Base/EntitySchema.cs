@@ -121,7 +121,7 @@ public sealed class EntitySchema
                 }
             }
 
-            if (componentType.Type != typeof(PluginComponentMarker))
+            if (componentType.Type != typeof(ModComponentMarker))
             {
                 componentTypeByType.Add(componentType.Type, componentType);
             }

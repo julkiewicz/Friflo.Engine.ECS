@@ -10,7 +10,7 @@ public partial class Archetype
     /// Returns the <see cref="StructHeap"/> for the given struct index,
     /// or null if this archetype does not contain that component.
     /// Works for both typed AOT heaps (<see cref="StructHeap{T}"/>) and
-    /// runtime plugin heaps (<see cref="PluginStructHeap"/>).
+    /// runtime mod heaps (<see cref="ExternallyManagedHeap"/>).
     /// </summary>
     public StructHeap? GetHeap(int structIndex)
     {

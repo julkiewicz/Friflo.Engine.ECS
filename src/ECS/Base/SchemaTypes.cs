@@ -66,9 +66,9 @@ internal sealed class SchemaTypes
         foreach (var type in componentTypes) {
             
             SchemaType schemaType;
-            if (typeof(PluginComponentMarker).IsAssignableFrom(type.type))
+            if (typeof(ModComponentMarker).IsAssignableFrom(type.type))
             {
-                schemaType = new PluginComponentType(components.Count + 1, default); // unused instance of PluginComponentRegistration
+                schemaType = new ModComponentType(components.Count + 1, default);
             }
             else if (typeof(IComponent).IsAssignableFrom(type.type)) {
                 schemaType = CreateComponentType(type.type);
@@ -114,7 +114,7 @@ internal sealed class SchemaTypes
             }
         }
         
-        indexCount += componentTypes.Count; // TODO: Hack to avoid IndexOutOfBounds if plugin components are registered before typed ones
+        indexCount += componentTypes.Count; // HACK: avoid IndexOutOfBounds if mod components are registered before typed ones
     }
 
     private const BindingFlags Flags    = BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.InvokeMethod;

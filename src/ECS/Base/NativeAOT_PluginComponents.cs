@@ -9,10 +9,10 @@ public sealed partial class NativeAOT
 {
     public static bool SchemaCreated => Instance?.entitySchema != null;
 
-    public int RegisterPluginComponent(PluginComponentRegistration pointers)
+    public int RegisterModComponent(ModComponentRegistration pointers)
     {
         var structIndex = schemaTypes.components.Count + 1;
-        schemaTypes.components.Add(new PluginComponentType(structIndex, pointers));
+        schemaTypes.components.Add(new ModComponentType(structIndex, pointers));
 
         return structIndex;
     }

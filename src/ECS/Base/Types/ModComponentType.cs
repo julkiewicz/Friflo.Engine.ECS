@@ -12,7 +12,7 @@ namespace Friflo.Engine.ECS;
 // Friflo.Engine.ECS fork addition.
 
 [StructLayout(LayoutKind.Sequential)]
-public struct PluginComponentRegistration
+public struct ModComponentRegistration
 {
     /// <summary><c>Unsafe.SizeOf&lt;T&gt;()</c> - informs the AOT side of component stride.</summary>
     public int Stride;
@@ -28,26 +28,26 @@ public struct PluginComponentRegistration
 }
 
 /// <summary>
-/// Delegate matching the AllocHeap function pointer in PluginComponentRegistration.
+/// Delegate matching the AllocHeap function pointer in ModComponentRegistration.
 /// </summary>
 public delegate void AllocHeapDelegate(int capacity, IntPtr outAOTHeapPointers);
 
 
-internal sealed class PluginComponentType : ComponentType
+internal sealed class ModComponentType : ComponentType
 {
-    public override string ToString() => $"PluginComponent[{StructIndex}] stride:{registration.Stride}";
+    public override string ToString() => $"ModComponent[{StructIndex}] stride:{registration.Stride}";
 
-    private readonly PluginComponentRegistration registration;
+    private readonly ModComponentRegistration registration;
 
     // Wrapped and stored as a field so the AOT-side GC doesn't collect the delegate wrapper
     // between archetype materializations.
     private readonly AllocHeapDelegate allocHeap;
 
-    internal PluginComponentType(int structIndex, PluginComponentRegistration registration)
+    internal ModComponentType(int structIndex, ModComponentRegistration registration)
         : base(
-            componentKey:   $"plugin_{structIndex}",
+            componentKey:   $"mod_{structIndex}",
             structIndex:    structIndex,
-            type:           typeof(PluginComponentMarker),
+            type:           typeof(ModComponentMarker),
             indexType:      null,
             indexValueType: null,
             byteSize:       registration.Stride,
@@ -73,16 +73,16 @@ internal sealed class PluginComponentType : ComponentType
 
     internal override bool RemoveEntityComponent(Entity entity)
         => throw new NotSupportedException(
-            $"Cannot dynamically remove plugin component [{StructIndex}] from an entity. " +
-            "Plugin component membership is fixed at entity creation.");
+            $"Cannot dynamically remove mod component [{StructIndex}] from an entity. " +
+            "Mod component membership is fixed at entity creation.");
 
     internal override bool AddEntityComponent(Entity entity)
         => throw new NotSupportedException(
-            $"Cannot dynamically add plugin component [{StructIndex}] to an entity. " +
-            "Plugin component membership is fixed at entity creation.");
+            $"Cannot dynamically add mod component [{StructIndex}] to an entity. " +
+            "Mod component membership is fixed at entity creation.");
 
     internal override bool AddEntityComponentValue(Entity entity, object value)
         => throw new NotSupportedException(
-            "Cannot add plugin component by value. " +
-            "Plugin component membership is fixed at entity creation.");
+            "Cannot add mod component by value. " +
+            "Mod component membership is fixed at entity creation.");
 }

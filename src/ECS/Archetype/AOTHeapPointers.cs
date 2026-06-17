@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 namespace Friflo.Engine.ECS;
 
 /// <summary>
-/// Blittable struct passed from CoreCLR to the AOT relay when registering a plugin component heap.
+/// Blittable struct passed from CoreCLR to the AOT relay when registering a mod component heap.
 /// </summary>
 [StructLayout(LayoutKind.Sequential)]
 public readonly struct AOTHeapPointers
