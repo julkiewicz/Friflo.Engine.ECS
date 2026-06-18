@@ -76,13 +76,13 @@ public abstract class ComponentType : SchemaType, IComparable<ComponentType>
     public TEnum AsEnum<TEnum>()  where TEnum : struct, Enum => ComponentEnum<TEnum>.IdMap[StructIndex];
 }
 
-internal static class StructInfo<T>
+public static class StructInfo<T>
     where T : struct
 {
     // --- static internal
     // Check initialization by directly calling unit test method: Test_SchemaType.Test_SchemaType_StructIndex()
     // readonly improves performance significant
-    internal static readonly    int     Index       = SchemaTypeUtils.GetStructIndex(typeof(T));
+    public static readonly    int     Index       = SchemaTypeUtils.GetStructIndex(typeof(T));
     
     internal static readonly    bool    HasIndex    = SchemaTypeUtils.HasIndex(typeof(T));
     

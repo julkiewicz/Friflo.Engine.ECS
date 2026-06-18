@@ -13,7 +13,7 @@ using Friflo.Engine.ECS.Relations;
 namespace Friflo.Engine.ECS;
 
 // ReSharper disable once InconsistentNaming
-public sealed class NativeAOT
+public sealed partial class NativeAOT
 {
     private             EntitySchema                entitySchema;
     private             bool                        engineTypesRegistered;
@@ -78,13 +78,13 @@ A type initializer threw an exception. To determine which type, inspect the Inne
         Instance        = this;
         return entitySchema;
     }
-    
+
     public EntitySchema CreateSchema()
     {
         Console.WriteLine("NativeAOT.CreateSchema()");
         return CreateSchemaInternal();
     }
-    
+
     private void InitSchema()
     {
         if (Instance?.entitySchema != null) {

@@ -66,7 +66,11 @@ internal sealed class SchemaTypes
         foreach (var type in componentTypes) {
             
             SchemaType schemaType;
-            if (typeof(IComponent).IsAssignableFrom(type.type)) {
+            if (typeof(ModComponentMarker).IsAssignableFrom(type.type))
+            {
+                schemaType = new ModComponentType(components.Count + 1, default);
+            }
+            else if (typeof(IComponent).IsAssignableFrom(type.type)) {
                 schemaType = CreateComponentType(type.type);
             } else {
                 schemaType = CreateRelationType(type.type);
@@ -109,6 +113,8 @@ internal sealed class SchemaTypes
                 componentTypes.Add(buffer[n]);
             }
         }
+        
+        indexCount += componentTypes.Count; // HACK: avoid IndexOutOfBounds if mod components are registered before typed ones
     }
 
     private const BindingFlags Flags    = BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.InvokeMethod;

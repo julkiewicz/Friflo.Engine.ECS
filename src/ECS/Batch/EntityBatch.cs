@@ -25,6 +25,12 @@ internal class BatchComponent<T> : BatchComponent where T : struct
     internal    T   value;
 }
 
+internal class ModBatchComponent(int stride) : BatchComponent
+{
+    public int Stride { get; } = stride;
+    public byte[] Data { get; } = new byte[stride];
+}
+
 internal enum BatchOwner
 {
     Application = 0,

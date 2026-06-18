@@ -33,7 +33,18 @@ internal sealed class StructHeap<T> : StructHeap, IComponentStash<T>
     // --- internal fields
     internal            T[]                 components;     //  8
     internal            T                   componentStash; //  sizeof(T)
-    
+
+    public override IntPtr GetComponentPointer(int index)
+    {
+        unsafe
+        {
+            fixed (T* ptr = components)
+            {
+                return (IntPtr)(ptr + index);
+            }
+        }
+    }
+
     internal StructHeap(int structIndex)
         : base (structIndex)
     {

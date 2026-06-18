@@ -33,6 +33,7 @@
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <EmbedAllSources>true</EmbedAllSources>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <!-- packaging: end -->
   </PropertyGroup>
 
@@ -57,13 +58,10 @@
   <!-- packaging: end -->
 
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' " />
 
   <ItemGroup>
     <PackageReference Include="Friflo.Json.Fliox" Version="1.0.4" />

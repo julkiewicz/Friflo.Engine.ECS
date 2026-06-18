@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
@@ -14,7 +15,8 @@ namespace Friflo.Engine.ECS;
 internal static class SchemaUtils
 {
     [ExcludeFromCodeCoverage]
-    private static bool RegisterComponentTypesByReflection() {
+    private static bool RegisterComponentTypesByReflection()
+    {
         if (Platform.IsUnityRuntime) {
             return true;
         }
@@ -23,16 +25,23 @@ internal static class SchemaUtils
 #else
         // Android does not require AOT. No need to register components via: new NativeAOT()
         return System.Runtime.CompilerServices.RuntimeFeature.IsDynamicCodeSupported;
-    //  return System.Runtime.CompilerServices.RuntimeFeature.IsDynamicCodeCompiled;
+        // return System.Runtime.CompilerServices.RuntimeFeature.IsDynamicCodeCompiled;
 #endif
     }
     
     [ExcludeFromCodeCoverage]
     internal static EntitySchema RegisterSchemaTypes()
     {
-        if (!RegisterComponentTypesByReflection()) {
+        if (NativeAOT.SchemaCreated)
+        {
             return NativeAOT.GetSchema();
         }
+
+        if (!RegisterComponentTypesByReflection())
+        {
+            return NativeAOT.GetSchema();
+        }
+
         return RegisterTypes();
     }
     
