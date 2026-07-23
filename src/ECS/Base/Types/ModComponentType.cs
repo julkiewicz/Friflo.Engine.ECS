@@ -25,6 +25,10 @@ public struct ModComponentRegistration
     public IntPtr ReadSnapshot;
     public IntPtr WriteDelta;
     public IntPtr ReadDelta;
+
+    /// <summary>Function pointer returning 1 if the component was changed from the API
+    /// (a server-authoritative override to be relayed back to the owner), 0 otherwise.</summary>
+    public IntPtr ChangedFromApi;
 }
 
 /// <summary>
