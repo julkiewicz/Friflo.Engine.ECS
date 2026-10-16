@@ -20,17 +20,8 @@ public struct ModComponentInfo
     /// <summary>1 if T is blittable and raw pointer iteration is available, 0 otherwise.</summary>
     public byte IsBlittable;
     
+    /// <summary>Function pointer allocating the component's storage for a newly materialized archetype.</summary>
     public IntPtr AllocHeap;
-    public IntPtr WriteSnapshot;
-    public IntPtr ReadSnapshot;
-    public IntPtr WriteDelta;
-    public IntPtr ReadDelta;
-
-    /// <summary>Function pointer: 1 if the component was changed from the API (server override).</summary>
-    public IntPtr ChangedFromApi;
-    
-    /// How the component's changes travel: 0 reliable, 1 unreliable. Mirrors <c>ReadyM.SDK.Attributes.Delivery</c>.
-    public byte Delivery;
 }
 
 /// <summary>
